@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iPhone User-Agent Generator Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+        }
+
+        .input-group:focus-within label {
+            color: #667eea;
+        }
+
+        input[type="text"], 
+        input[type="number"], 
+        textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: #fff;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus, 
+        input[type="number"]:focus, 
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        input[type="text"]:hover, 
+        input[type="number"]:hover, 
+        textarea:hover {
+            border-color: #b0b0b0;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-family: 'Courier New', monospace;
+            line-height: 1.6;
+        }
+
+        small {
+            display: block;
+            margin-top: 6px;
+            color: #666;
+            font-size: 0.85rem;
+            font-style: italic;
+        }
+
+        .button, button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .button:hover, button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .button:active, button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px rgba(102, 126, 234, 0.4);
+        }
+
+        .button::before, button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .button:active::before, button:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .secondary-button {
+            background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.4);
+        }
+
+        .secondary-button:hover {
+            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.6);
+        }
+
+        .danger-button {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            padding: 8px 16px;
+            font-size: 13px;
+            box-shadow: 0 2px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .danger-button:hover {
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.5);
+        }
+
+        .success-button {
+            background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        .success-button:hover {
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.6);
+        }
+
+        .fb-pair {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            align-items: center;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .fb-pair:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .fb-pair div {
+            flex-grow: 1;
+        }
+
+        #output {
+            background-color: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            font-family: 'Courier New', monospace;
+            line-height: 1.8;
+        }
+
+        .output-controls {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .fbsv-display {
+            padding: 14px 16px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: #495057;
+            text-align: center;
+            font-size: 15px;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #e0e0e0, transparent);
+            margin: 35px 0;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateX(400px);
+            transition: transform 0.4s ease;
+            z-index: 1000;
+            min-width: 280px;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-left: 4px solid #28a745;
+        }
+
+        .toast.error {
+            border-left: 4px solid #dc3545;
+        }
+
+        .toast-icon {
+            font-size: 24px;
+        }
+
+        .toast-message {
+            flex: 1;
+            font-weight: 500;
+        }
+
+        /* Spacing Control */
+        .spacing-control {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .spacing-control h3 {
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .radio-option input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .radio-option label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        /* Loading State */
+        .loading {
+            pointer-events: none;
+            opacity: 0.7;
+            position: relative;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Stats Display */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        /* Copy button for individual lines */
+        .output-wrapper {
+            position: relative;
+        }
+
+        #outputContainer {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .output-line {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .output-line:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .output-text {
+            flex: 1;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            word-break: break-all;
+            color: #333;
+        }
+
+        .copy-line-btn {
+            padding: 6px 12px;
+            font-size: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .copy-line-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 10px rgba(102, 126, 234, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .output-controls {
+                justify-content: stretch;
+            }
+
+            .output-controls button {
+                flex: 1;
+                margin: 5px 0;
+            }
+
+            .radio-group {
+                flex-direction: column;
+            }
+
+            .stats {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.75rem;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🚀 iPhone User-Agent Generator Pro</h1>
+        <p class="subtitle">Generate professional iPhone user-agent strings with advanced customization</p>
+
+        <!-- Stats Display -->
+        <div class="stats" id="statsDisplay" style="display: none;">
+            <div class="stat-card">
+                <div class="stat-value" id="statGenerated">0</div>
+                <div class="stat-label">Generated</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statPairs">0</div>
+                <div class="stat-label">FBAV/FBBV Pairs</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statFBRV">0</div>
+                <div class="stat-label">FBRV Values</div>
+            </div>
+        </div>
+
+        <div class="input-group full-width">
+            <label for="baseUa">📝 Base User-Agent String</label>
+            <textarea id="baseUa" rows="4">Mozilla/5.0 (iPhone; CPU iPhone OS {OS_VERSION} like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/{MOBILE_TOKEN} [FBAN/FBIOS;FBAV/{FBAV};FBBV/{FBBV};FBDV/{FBDV};FBMD/iPhone;FBSN/iOS;FBSV/{FBSV};FBSS/3;FBID/phone;FBLC/en_US;FBOP/5;FBRV/{FBRV};IABMV/1]</textarea>
+            <small>💡 Use placeholders like {OS_VERSION}, {FBAV}, etc. to mark where values should be inserted.</small>
+        </div>
+
+        <hr>
+
+        <div class="grid">
+            <div class="input-group">
+                <label for="osVersion">1️⃣ iOS Version</label>
+                <input type="text" id="osVersion" value="18_3_2" placeholder="e.g., 18_3_2">
+            </div>
+            <div class="input-group">
+                <label for="mobileToken">2️⃣ Mobile Token</label>
+                <input type="text" id="mobileToken" value="22D82" placeholder="e.g., 22D82">
+            </div>
+            <div class="input-group">
+                <label for="fbdv">4️⃣ Device Model (FBDV)</label>
+                <input type="text" id="fbdv" value="iPhone14,2" placeholder="e.g., iPhone14,2">
+            </div>
+            <div class="input-group">
+                <label>5️⃣ Facebook iOS Version (FBSV)</label>
+                <div id="fbsvDisplay" class="fbsv-display">18.3.2</div>
+            </div>
+        </div>
+
+        <div class="input-group full-width">
+            <label>3️⃣ FBAV / FBBV Pairs</label>
+            <div id="fbavFbbvPairs">
+                <div class="fb-pair">
+                    <div><input type="text" class="fbav" placeholder="FBAV (e.g., 530.0.0.48.74)" value="530.0.0.48.74"></div>
+                    <div><input type="text" class="fbbv" placeholder="FBBV (e.g., 756351453)" value="756351453"></div>
+                    <button class="danger-button" onclick="removePair(this)">✕ Remove</button>
+                </div>
+            </div>
+            <button onclick="addPair()">➕ Add Pair</button>
+        </div>
+        
+        <div class="input-group full-width">
+            <label for="fbrvList">6️⃣ FBRV Values (one per line)</label>
+            <textarea id="fbrvList" rows="5">684552024
+761622528
+786844321</textarea>
+        </div>
+
+        <hr>
+
+        <!-- Spacing Control -->
+        <div class="spacing-control">
+            <h3>📏 Output Formatting</h3>
+            <div class="radio-group">
+                <div class="radio-option">
+                    <input type="radio" id="spacingNone" name="spacing" value="none" checked>
+                    <label for="spacingNone">No spacing</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="spacingLine" name="spacing" value="line">
+                    <label for="spacingLine">Single line break</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="spacingDouble" name="spacing" value="double">
+                    <label for="spacingDouble">Double line break</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="spacingSeparator" name="spacing" value="separator">
+                    <label for="spacingSeparator">Line separator (---)</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="input-group">
+                <label for="quantity">🔢 Quantity to Generate</label>
+                <input type="number" id="quantity" value="10" min="1" max="10000" placeholder="Enter quantity">
+            </div>
+            <div class="input-group" style="align-self: end; display: flex; gap: 10px; flex-wrap: wrap;">
+                 <button id="generateBtn" class="success-button">⚡ Generate</button>
+                 <button id="saveBtn" class="secondary-button">💾 Save</button>
+                 <button id="loadBtn" class="secondary-button">📂 Load</button>
+            </div>
+        </div>
+
+        <div class="input-group full-width output-wrapper">
+            <label for="output">📤 Generated User-Agents</label>
+            <textarea id="output" rows="12" readonly placeholder="Click 'Generate' to create user-agent strings..."></textarea>
+            <div class="output-controls">
+                <button id="copyBtn" class="secondary-button">📋 Copy All</button>
+                <button id="downloadBtn" class="secondary-button">⬇️ Download TXT</button>
+                <button id="toggleViewBtn" class="secondary-button">👁️ Toggle View</button>
+            </div>
+        </div>
+
+        <!-- Individual Line View -->
+        <div id="outputContainer"></div>
+
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <span class="toast-icon"></span>
+        <span class="toast-message"></span>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DOM Element References ---
+            const osVersionInput = document.getElementById('osVersion');
+            const mobileTokenInput = document.getElementById('mobileToken');
+            const fbdvInput = document.getElementById('fbdv');
+            const fbsvDisplay = document.getElementById('fbsvDisplay');
+            const fbrvListTextarea = document.getElementById('fbrvList');
+            const fbavFbbvPairsContainer = document.getElementById('fbavFbbvPairs');
+            const quantityInput = document.getElementById('quantity');
+            const baseUaTextarea = document.getElementById('baseUa');
+            const outputTextarea = document.getElementById('output');
+            const outputContainer = document.getElementById('outputContainer');
+            const statsDisplay = document.getElementById('statsDisplay');
+            
+            const generateBtn = document.getElementById('generateBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const saveBtn = document.getElementById('saveBtn');
+            const loadBtn = document.getElementById('loadBtn');
+            const toggleViewBtn = document.getElementById('toggleViewBtn');
+            
+            let isLineView = false;
+            
+            // --- Event Listeners ---
+            osVersionInput.addEventListener('input', updateFbsvDisplay);
+            generateBtn.addEventListener('click', generateUserAgents);
+            copyBtn.addEventListener('click', copyToClipboard);
+            downloadBtn.addEventListener('click', downloadAsTxt);
+            saveBtn.addEventListener('click', saveConfiguration);
+            loadBtn.addEventListener('click', loadConfiguration);
+            toggleViewBtn.addEventListener('click', toggleView);
+
+            // Initialize FBSV display
+            updateFbsvDisplay();
+
+            // --- Toast Notification ---
+            function showToast(message, type = 'success') {
+                const toast = document.getElementById('toast');
+                const icon = toast.querySelector('.toast-icon');
+                const messageEl = toast.querySelector('.toast-message');
+                
+                messageEl.textContent = message;
+                toast.className = `toast ${type}`;
+                icon.textContent = type === 'success' ? '✓' : '✕';
+                
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
+
+            // --- Core Functions ---
+            function updateFbsvDisplay() {
+                fbsvDisplay.textContent = osVersionInput.value.replace(/_/g, '.') || 'N/A';
+            }
+            
+            window.addPair = function() {
+                const pairDiv = document.createElement('div');
+                pairDiv.className = 'fb-pair';
+                pairDiv.innerHTML = `
+                    <div><input type="text" class="fbav" placeholder="FBAV (e.g., 530.0.0.48.74)"></div>
+                    <div><input type="text" class="fbbv" placeholder="FBBV (e.g., 756351453)"></div>
+                    <button class="danger-button" onclick="removePair(this)">✕ Remove</button>
+                `;
+                fbavFbbvPairsContainer.appendChild(pairDiv);
+                updateStats();
+                showToast('Pair added successfully', 'success');
+            }
+
+            window.removePair = function(button) {
+                if (fbavFbbvPairsContainer.children.length > 1) {
+                    button.parentElement.remove();
+                    updateStats();
+                    showToast('Pair removed', 'success');
+                } else {
+                    showToast('At least one FBAV/FBBV pair is required', 'error');
+                }
+            }
+
+            function updateStats() {
+                const fbrvValues = fbrvListTextarea.value.split('\n').map(s => s.trim()).filter(Boolean);
+                const pairElements = fbavFbbvPairsContainer.getElementsByClassName('fb-pair');
+                
+                document.getElementById('statPairs').textContent = pairElements.length;
+                document.getElementById('statFBRV').textContent = fbrvValues.length;
+            }
+
+            function getSpacingSeparator() {
+                const selected = document.querySelector('input[name="spacing"]:checked').value;
+                switch(selected) {
+                    case 'line': return '\n';
+                    case 'double': return '\n\n';
+                    case 'separator': return '\n---\n';
+                    default: return '';
+                }
+            }
+
+            function generateUserAgents() {
+                generateBtn.classList.add('loading');
+                generateBtn.textContent = '';
+                
+                setTimeout(() => {
+                    const baseUa = baseUaTextarea.value;
+                    const osVersion = osVersionInput.value;
+                    const mobileToken = mobileTokenInput.value;
+                    const fbdv = fbdvInput.value;
+                    const fbsv = osVersion.replace(/_/g, '.');
+                    const quantity = parseInt(quantityInput.value, 10);
+
+                    const fbrvValues = fbrvListTextarea.value.split('\n').map(s => s.trim()).filter(Boolean);
+                    
+                    const fbavFbbvPairs = [];
+                    const pairElements = fbavFbbvPairsContainer.getElementsByClassName('fb-pair');
+                    for (const pair of pairElements) {
+                        const fbav = pair.querySelector('.fbav').value.trim();
+                        const fbbv = pair.querySelector('.fbbv').value.trim();
+                        if (fbav && fbbv) {
+                            fbavFbbvPairs.push({ fbav, fbbv });
+                        }
+                    }
+                    
+                    if (!osVersion || !mobileToken || !fbdv || fbrvValues.length === 0 || fbavFbbvPairs.length === 0) {
+                        showToast('Please fill in all required fields', 'error');
+                        generateBtn.classList.remove('loading');
+                        generateBtn.textContent = '⚡ Generate';
+                        return;
+                    }
+
+                    const generatedUas = new Set();
+                    const separator = getSpacingSeparator();
+                    
+                    // Warn about uniqueness if needed
+                    const maxUniqueCombinations = fbrvValues.length * fbavFbbvPairs.length;
+                    if (quantity > maxUniqueCombinations) {
+                         console.warn(`Warning: Requested ${quantity} UAs, but only ${maxUniqueCombinations} unique combinations are possible.`);
+                    }
+                    
+                    while (generatedUas.size < quantity) {
+                        const randomPair = fbavFbbvPairs[Math.floor(Math.random() * fbavFbbvPairs.length)];
+                        const randomFbrv = fbrvValues[Math.floor(Math.random() * fbrvValues.length)];
+
+                        let newUa = baseUa
+                            .replace(/{OS_VERSION}/g, osVersion)
+                            .replace(/{MOBILE_TOKEN}/g, mobileToken)
+                            .replace(/{FBDV}/g, fbdv)
+                            .replace(/{FBSV}/g, fbsv)
+                            .replace(/{FBAV}/g, randomPair.fbav)
+                            .replace(/{FBBV}/g, randomPair.fbbv)
+                            .replace(/{FBRV}/g, randomFbrv);
+
+                        generatedUas.add(newUa);
+                        
+                        // Break if we can't find new unique UAs to avoid infinite loop
+                        if (generatedUas.size >= maxUniqueCombinations && generatedUas.size < quantity) {
+                            for (let i = 0; i < quantity - generatedUas.size; i++) {
+                                 const randomPair = fbavFbbvPairs[Math.floor(Math.random() * fbavFbbvPairs.length)];
+                                 const randomFbrv = fbrvValues[Math.floor(Math.random() * fbrvValues.length)];
+                                 let nonUniqueUa = baseUa
+                                    .replace(/{OS_VERSION}/g, osVersion)
+                                    .replace(/{MOBILE_TOKEN}/g, mobileToken)
+                                    .replace(/{FBDV}/g, fbdv)
+                                    .replace(/{FBSV}/g, fbsv)
+                                    .replace(/{FBAV}/g, randomPair.fbav)
+                                    .replace(/{FBBV}/g, randomPair.fbbv)
+                                    .replace(/{FBRV}/g, randomFbrv);
+                                generatedUas.add(nonUniqueUa + `_DUPE_${i}`);
+                            }
+                            break;
+                        }
+                    }
+
+                    const uaArray = [...generatedUas].map(ua => ua.replace(/_DUPE_\d+$/, ''));
+                    outputTextarea.value = uaArray.join(separator ? separator : '\n');
+                    
+                    // Update stats
+                    statsDisplay.style.display = 'grid';
+                    document.getElementById('statGenerated').textContent = uaArray.length;
+                    updateStats();
+                    
+                    generateBtn.classList.remove('loading');
+                    generateBtn.textContent = '⚡ Generate';
+                    showToast(`Successfully generated ${uaArray.length} user-agents!`, 'success');
+                    
+                    // If in line view, update it
+                    if (isLineView) {
+                        displayLineView(uaArray);
+                    }
+                }, 300);
+            }
+
+            function copyToClipboard() {
+                if (!outputTextarea.value) {
+                    showToast('Nothing to copy!', 'error');
+                    return;
+                }
+                
+                copyBtn.classList.add('loading');
+                copyBtn.textContent = '';
+                
+                navigator.clipboard.writeText(outputTextarea.value).then(() => {
+                    setTimeout(() => {
+                        copyBtn.classList.remove('loading');
+                        copyBtn.textContent = '📋 Copy All';
+                        showToast('Copied to clipboard!', 'success');
+                    }, 500);
+                }).catch(err => {
+                    copyBtn.classList.remove('loading');
+                    copyBtn.textContent = '📋 Copy All';
+                    showToast('Failed to copy!', 'error');
+                    console.error('Clipboard error:', err);
+                });
+            }
+
+            function downloadAsTxt() {
+                if (!outputTextarea.value) {
+                    showToast('Nothing to download!', 'error');
+                    return;
+                }
+                
+                downloadBtn.classList.add('loading');
+                downloadBtn.textContent = '';
+                
+                setTimeout(() => {
+                    const blob = new Blob([outputTextarea.value], { type: 'text/plain' });
+                    const a = document.createElement('a');
+                    const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+                    a.href = URL.createObjectURL(blob);
+                    a.download = `user-agents-${timestamp}.txt`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(a.href);
+                    
+                    downloadBtn.classList.remove('loading');
+                    downloadBtn.textContent = '⬇️ Download TXT';
+                    showToast('File downloaded successfully!', 'success');
+                }, 500);
+            }
+
+            function saveConfiguration() {
+                const fbavFbbvPairs = [];
+                const pairElements = fbavFbbvPairsContainer.getElementsByClassName('fb-pair');
+                for (const pair of pairElements) {
+                    fbavFbbvPairs.push({
+                        fbav: pair.querySelector('.fbav').value,
+                        fbbv: pair.querySelector('.fbbv').value
+                    });
+                }
+
+                const config = {
+                    baseUa: baseUaTextarea.value,
+                    osVersion: osVersionInput.value,
+                    mobileToken: mobileTokenInput.value,
+                    fbdv: fbdvInput.value,
+                    fbrvList: fbrvListTextarea.value,
+                    fbavFbbvPairs: fbavFbbvPairs,
+                    spacing: document.querySelector('input[name="spacing"]:checked').value
+                };
+
+                localStorage.setItem('uaGenConfig', JSON.stringify(config));
+                showToast('Configuration saved successfully!', 'success');
+            }
+
+            function loadConfiguration() {
+                const savedConfig = localStorage.getItem('uaGenConfig');
+                if (!savedConfig) {
+                    showToast('No saved configuration found', 'error');
+                    return;
+                }
+
+                const config = JSON.parse(savedConfig);
+
+                baseUaTextarea.value = config.baseUa;
+                osVersionInput.value = config.osVersion;
+                mobileTokenInput.value = config.mobileToken;
+                fbdvInput.value = config.fbdv;
+                fbrvListTextarea.value = config.fbrvList;
+
+                // Re-create FBAV/FBBV pairs
+                fbavFbbvPairsContainer.innerHTML = '';
+                config.fbavFbbvPairs.forEach(pair => {
+                    const pairDiv = document.createElement('div');
+                    pairDiv.className = 'fb-pair';
+                    pairDiv.innerHTML = `
+                        <div><input type="text" class="fbav" placeholder="FBAV" value="${pair.fbav}"></div>
+                        <div><input type="text" class="fbbv" placeholder="FBBV" value="${pair.fbbv}"></div>
+                        <button class="danger-button" onclick="removePair(this)">✕ Remove</button>
+                    `;
+                    fbavFbbvPairsContainer.appendChild(pairDiv);
+                });
+                
+                // Restore spacing setting
+                if (config.spacing) {
+                    document.getElementById(`spacing${config.spacing.charAt(0).toUpperCase() + config.spacing.slice(1)}`).checked = true;
+                }
+                
+                updateFbsvDisplay();
+                updateStats();
+                showToast('Configuration loaded successfully!', 'success');
+            }
+
+            function toggleView() {
+                isLineView = !isLineView;
+                
+                if (isLineView) {
+                    const uaArray = outputTextarea.value.split(/\n+/).filter(line => line.trim() && !line.trim().startsWith('---'));
+                    if (uaArray.length === 0) {
+                        showToast('Generate user-agents first!', 'error');
+                        isLineView = false;
+                        return;
+                    }
+                    displayLineView(uaArray);
+                    outputTextarea.style.display = 'none';
+                    outputContainer.style.display = 'block';
+                    toggleViewBtn.textContent = '📝 Text View';
+                } else {
+                    outputTextarea.style.display = 'block';
+                    outputContainer.style.display = 'none';
+                    toggleViewBtn.textContent = '👁️ Toggle View';
+                }
+            }
+
+            function displayLineView(uaArray) {
+                outputContainer.innerHTML = '<h3 style="margin-bottom: 15px; color: #333;">Individual User-Agents</h3>';
+                uaArray.forEach((ua, index) => {
+                    const lineDiv = document.createElement('div');
+                    lineDiv.className = 'output-line';
+                    lineDiv.innerHTML = `
+                        <span style="color: #666; font-weight: 600; min-width: 30px;">#${index + 1}</span>
+                        <div class="output-text">${ua}</div>
+                        <button class="copy-line-btn" onclick="copyLine('${ua.replace(/'/g, "\\'")}')">📋 Copy</button>
+                    `;
+                    outputContainer.appendChild(lineDiv);
+                });
+            }
+
+            window.copyLine = function(text) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast('Line copied to clipboard!', 'success');
+                }).catch(err => {
+                    showToast('Failed to copy!', 'error');
+                });
+            }
+
+            // Update stats on input change
+            fbrvListTextarea.addEventListener('input', updateStats);
+        });
+    </script>
+</body>
+</html>
