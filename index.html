@@ -289,6 +289,10 @@
         .toast.error {
             border-left: 4px solid #dc3545;
         }
+        
+        .toast.warning {
+            border-left: 4px solid #ffc107;
+        }
 
         .toast-icon {
             font-size: 24px;
@@ -517,8 +521,8 @@
 
         <div class="input-group full-width">
             <label for="baseUa">📝 Base User-Agent String</label>
-            <textarea id="baseUa" rows="4">Mozilla/5.0 (iPhone; CPU iPhone OS {OS_VERSION} like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/{MOBILE_TOKEN} [FBAN/FBIOS;FBAV/{FBAV};FBBV/{FBBV};FBDV/{FBDV};FBMD/iPhone;FBSN/iOS;FBSV/{FBSV};FBSS/3;FBID/phone;FBLC/en_US;FBOP/5;FBRV/{FBRV};IABMV/1]</textarea>
-            <small>💡 Use placeholders like {OS_VERSION}, {FBAV}, etc. to mark where values should be inserted.</small>
+            <textarea id="baseUa" rows="4">Mozilla/5.0 (iPhone; CPU iPhone OS 17_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 [FBAN/FBIOS;FBAV/511.0.0.35.111;FBBV/613248339;FBDV/iPhone15,2;FBMD/iPhone;FBSN/iOS;FBSV/17.5.1;FBSS/3;FBID/phone;FBLC/en_US;FBOP/5;FBRV/618274352;IABMV/1]</textarea>
+            <small>💡 Paste any iPhone UA. The tool will auto-detect and replace values from the fields below.</small>
         </div>
 
         <hr>
@@ -663,8 +667,10 @@
                 
                 messageEl.textContent = message;
                 toast.className = `toast ${type}`;
-                icon.textContent = type === 'success' ? '✓' : '✕';
-                
+                if (type === 'success') icon.textContent = '✓';
+                else if (type === 'error') icon.textContent = '✕';
+                else if (type === 'warning') icon.textContent = '⚠️';
+
                 toast.classList.add('show');
                 setTimeout(() => {
                     toast.classList.remove('show');
@@ -716,6 +722,26 @@
                     default: return '';
                 }
             }
+            
+            /**
+             * Smartly replaces a value in the user agent string.
+             * It first tries to replace a placeholder, and if not found,
+             * uses a regex to replace the actual value.
+             * @param {string} ua - The user agent string.
+             * @param {string} placeholder - The placeholder (e.g., "{FBAV}").
+             * @param {RegExp} regex - The regex to find the value if placeholder is missing.
+             * @param {string} value - The new value to insert.
+             * @returns {string} - The updated user agent string.
+             */
+            function smartReplace(ua, placeholder, regex, value) {
+                if (ua.includes(placeholder)) {
+                    return ua.replace(new RegExp(placeholder.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'), value);
+                }
+                if (regex.test(ua)) {
+                    return ua.replace(regex, `$1${value}`);
+                }
+                return ua;
+            }
 
             function generateUserAgents() {
                 generateBtn.classList.add('loading');
@@ -751,50 +777,52 @@
                     const generatedUas = new Set();
                     const separator = getSpacingSeparator();
                     
-                    // Warn about uniqueness if needed
                     const maxUniqueCombinations = fbrvValues.length * fbavFbbvPairs.length;
                     if (quantity > maxUniqueCombinations) {
-                         console.warn(`Warning: Requested ${quantity} UAs, but only ${maxUniqueCombinations} unique combinations are possible.`);
+                         showToast(`Requested ${quantity}, but only ${maxUniqueCombinations} unique combinations are possible. Duplicates will be generated.`, 'warning');
                     }
                     
-                    while (generatedUas.size < quantity) {
+                    let attempts = 0;
+                    while (generatedUas.size < quantity && attempts < quantity * 10) {
                         const randomPair = fbavFbbvPairs[Math.floor(Math.random() * fbavFbbvPairs.length)];
                         const randomFbrv = fbrvValues[Math.floor(Math.random() * fbrvValues.length)];
 
-                        let newUa = baseUa
-                            .replace(/{OS_VERSION}/g, osVersion)
-                            .replace(/{MOBILE_TOKEN}/g, mobileToken)
-                            .replace(/{FBDV}/g, fbdv)
-                            .replace(/{FBSV}/g, fbsv)
-                            .replace(/{FBAV}/g, randomPair.fbav)
-                            .replace(/{FBBV}/g, randomPair.fbbv)
-                            .replace(/{FBRV}/g, randomFbrv);
+                        let newUa = baseUa;
+                        
+                        // Perform smart replacements
+                        newUa = smartReplace(newUa, '{OS_VERSION}', /(iPhone OS )\d+_\d+(_\d+)?/g, osVersion);
+                        newUa = smartReplace(newUa, '{MOBILE_TOKEN}', /(Mobile\/)[a-zA-Z0-9]+/g, mobileToken);
+                        newUa = smartReplace(newUa, '{FBDV}', /(FBDV\/)[^;]+/g, fbdv);
+                        newUa = smartReplace(newUa, '{FBSV}', /(FBSV\/)[\d\.]+/g, fbsv);
+                        newUa = smartReplace(newUa, '{FBAV}', /(FBAV\/)[\d\.]+/g, randomPair.fbav);
+                        newUa = smartReplace(newUa, '{FBBV}', /(FBBV\/)\d+/g, randomPair.fbbv);
+                        newUa = smartReplace(newUa, '{FBRV}', /(FBRV\/)\d+/g, randomFbrv);
 
                         generatedUas.add(newUa);
-                        
-                        // Break if we can't find new unique UAs to avoid infinite loop
-                        if (generatedUas.size >= maxUniqueCombinations && generatedUas.size < quantity) {
-                            for (let i = 0; i < quantity - generatedUas.size; i++) {
-                                 const randomPair = fbavFbbvPairs[Math.floor(Math.random() * fbavFbbvPairs.length)];
-                                 const randomFbrv = fbrvValues[Math.floor(Math.random() * fbrvValues.length)];
-                                 let nonUniqueUa = baseUa
-                                    .replace(/{OS_VERSION}/g, osVersion)
-                                    .replace(/{MOBILE_TOKEN}/g, mobileToken)
-                                    .replace(/{FBDV}/g, fbdv)
-                                    .replace(/{FBSV}/g, fbsv)
-                                    .replace(/{FBAV}/g, randomPair.fbav)
-                                    .replace(/{FBBV}/g, randomPair.fbbv)
-                                    .replace(/{FBRV}/g, randomFbrv);
-                                generatedUas.add(nonUniqueUa + `_DUPE_${i}`);
-                            }
-                            break;
+                        attempts++;
+                    }
+
+                    // If unique generation failed, fill the rest with non-unique values
+                    if (generatedUas.size < quantity) {
+                        while (generatedUas.size < quantity) {
+                            const randomPair = fbavFbbvPairs[Math.floor(Math.random() * fbavFbbvPairs.length)];
+                            const randomFbrv = fbrvValues[Math.floor(Math.random() * fbrvValues.length)];
+                            let nonUniqueUa = baseUa;
+                            nonUniqueUa = smartReplace(nonUniqueUa, '{OS_VERSION}', /(iPhone OS )\d+_\d+(_\d+)?/g, osVersion);
+                            nonUniqueUa = smartReplace(nonUniqueUa, '{MOBILE_TOKEN}', /(Mobile\/)[a-zA-Z0-9]+/g, mobileToken);
+                            nonUniqueUa = smartReplace(nonUniqueUa, '{FBDV}', /(FBDV\/)[^;]+/g, fbdv);
+                            nonUniqueUa = smartReplace(nonUniqueUa, '{FBSV}', /(FBSV\/)[\d\.]+/g, fbsv);
+                            nonUniqueUa = smartReplace(nonUniqueUa, '{FBAV}', /(FBAV\/)[\d\.]+/g, randomPair.fbav);
+                            nonUniqueUa = smartReplace(nonUniqueUa, '{FBBV}', /(FBBV\/)\d+/g, randomPair.fbbv);
+                            nonUniqueUa = smartReplace(nonUniqueUa, '{FBRV}', /(FBRV\/)\d+/g, randomFbrv);
+                            // Add a random element to ensure it can be added to the Set
+                            generatedUas.add(nonUniqueUa + `_#${Math.random()}`);
                         }
                     }
 
-                    const uaArray = [...generatedUas].map(ua => ua.replace(/_DUPE_\d+$/, ''));
+                    const uaArray = [...generatedUas].map(ua => ua.replace(/_#[\d\.]+$/, ''));
                     outputTextarea.value = uaArray.join(separator ? separator : '\n');
                     
-                    // Update stats
                     statsDisplay.style.display = 'grid';
                     document.getElementById('statGenerated').textContent = uaArray.length;
                     updateStats();
@@ -803,7 +831,6 @@
                     generateBtn.textContent = '⚡ Generate';
                     showToast(`Successfully generated ${uaArray.length} user-agents!`, 'success');
                     
-                    // If in line view, update it
                     if (isLineView) {
                         displayLineView(uaArray);
                     }
@@ -898,7 +925,6 @@
                 fbdvInput.value = config.fbdv;
                 fbrvListTextarea.value = config.fbrvList;
 
-                // Re-create FBAV/FBBV pairs
                 fbavFbbvPairsContainer.innerHTML = '';
                 config.fbavFbbvPairs.forEach(pair => {
                     const pairDiv = document.createElement('div');
@@ -911,7 +937,6 @@
                     fbavFbbvPairsContainer.appendChild(pairDiv);
                 });
                 
-                // Restore spacing setting
                 if (config.spacing) {
                     document.getElementById(`spacing${config.spacing.charAt(0).toUpperCase() + config.spacing.slice(1)}`).checked = true;
                 }
